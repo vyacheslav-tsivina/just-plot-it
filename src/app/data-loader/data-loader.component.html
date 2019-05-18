@@ -1,0 +1,8 @@
+Data input
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="Delimiter" [(ngModel)]="delimiter">
+    <label for="dataInputArea">Input series</label>
+    <textarea class="form-control" id="dataInputArea" rows="10" [(ngModel)]="input_text"></textarea>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{errorMessage}}</div>
+    <button type="button" class="btn btn-primary" (click)="loadData()">Load data</button>
+  </div>
