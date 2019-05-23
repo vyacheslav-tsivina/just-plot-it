@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { DataSeries } from 'src/app/service/data.service';
+import * as Chart from 'chart.js';
 
 @Component({
   selector: 'plot',
@@ -9,41 +10,57 @@ import { DataSeries } from 'src/app/service/data.service';
 export class PlotComponent implements OnInit {
   @Input("dataSeries")
   dataSeries : DataSeries
-  public barChartOptions
-  public barChartLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
-  public barChartType = 'line';
-  public barChartLegend = true;
-  public barChartData
+  chart: Chart
 
-  constructor() { 
+  constructor(public el: ElementRef) { 
     
   }
 
-  ngOnInit() {
-    this.barChartOptions = {
+  initChart() {
+    var chartType = 'line'
+    var chartOptions
+    var labels
+    var chartData
+
+    chartOptions = {
       scaleShowVerticalLines: true,
       responsive: true,
-    };
+    }
+
     var data = []
-    
-    
+    // in case we have both x and y
     if (this.dataSeries.x){
-      this.barChartType = 'scatter'
+      chartType = 'scatter'
       data = this.xyData()
-      this.barChartOptions.showLine  = true
+      chartOptions.showLine  = true
 
     }
+    // no x, but labelsX
     if (this.dataSeries.labelsX){
       data = this.dataSeries.y
-      this.barChartLabels = this.dataSeries.labelsX
+      labels = this.dataSeries.labelsX
     }
+    // onlu y, so generate labels
     if (!this.dataSeries.labelsX && !this.dataSeries.x){
       data = this.dataSeries.y
-      this.barChartLabels = Array.from({length: this.dataSeries.y.length}, (v, k) => (k+1).toString())
+      labels = Array.from({length: this.dataSeries.y.length}, (v, k) => (k+1).toString())
     }
-    this.barChartData = [
+    
+    chartData = {datasets:[
       { data: data, label: this.dataSeries.name, backgroundColor: "rgba(255,221,50,0.2)",borderColor: "rgba(255,221,50,1)", showLine: true}
-    ]
+    ]}
+    if (labels){
+      chartData.labels = labels
+    }
+    this.chart = new Chart(this.el.nativeElement.children[0].children[0], {
+        type: chartType,
+        data: chartData,
+        options: chartOptions,
+    });
+}
+
+  ngOnInit() {
+    this.initChart()
   }
 
   xyData(): object[] {
