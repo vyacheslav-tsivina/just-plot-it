@@ -20,4 +20,8 @@ export class DataLoaderComponent {
         this.errorMessage = error
       }
   }
+
+  clearInput(){
+    this.input_text = ""
+  }
 }
