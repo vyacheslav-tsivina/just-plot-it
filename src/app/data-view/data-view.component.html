@@ -1,3 +1,17 @@
-Data view
+<h4>Data view</h4>
+<ng-template #tipContent>
+    <div style="text-align: left">
+            series has: <br /> 
+            - 'x,y' -  both x and y  <br /> 
+            - 'categories' - values and labels <br />
+            - 'values' - only values
+    </div>
+        
+</ng-template>
 <button type="button" class="btn btn-danger" (click)="eraseAll()">Erase All</button>
-<div *ngFor="let s of series">{{s.name}}</div>
+<div *ngFor="let s of series">
+    <input type="checkbox" class="form-check-input" name="series_chosen" value="series_{{s.name}}">
+    <div #series_div class="series-name" (click)="editName(series_name, series_div, name_input, s)"><span
+            #series_name>{{s.name}}</span> <span class="series-type" placement="right" [ngbTooltip]="tipContent"> type: <span>{{defineType(s)}}</span></span></div>
+    <input #name_input type="text" hidden="true" (keydown)="onInputKeydown($event)">
+</div>
