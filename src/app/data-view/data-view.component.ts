@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChildren, QueryList } from '@angular/core';
 import { DataService, DataSeries } from '../service/data.service';
+import { Util } from '../util/util';
 
 @Component({
   selector: 'data-view',
@@ -13,13 +14,18 @@ export class DataViewComponent {
   active_div
   active_series
 
+  selected_series: DataSeries[]
+  @ViewChildren("checkbox") checkboxes: QueryList<any>
+
   constructor(private dataService: DataService) {
     this.series = dataService.series
+    this.selected_series = []
   }
 
   eraseAll() {
     this.dataService.series = []
     this.series = this.dataService.series
+    this.dataService.series_id_counter = 0
   }
 
   editName(span, series_div, input, series) {
@@ -48,13 +54,36 @@ export class DataViewComponent {
     }
   }
 
-  defineType(series: DataSeries) {
-    if (series.x) {
-      return "x,y"
+
+  /**
+   * Checks if checked series compatible with previsosly selected series
+   * @param event checkbox click event
+   */
+  checkValue(event) {
+    console.log(this.selected_series)
+    var checkbox = event.target
+    // don't let different types in one figure
+    if (checkbox.checked && this.selected_series.length > 0 && this.selected_series[0].type != this.series[checkbox.value].type) {
+      checkbox.checked = false
+      return
     }
-    if (series.labelsX) {
-      return "categories"
+    if (!checkbox.checked) {
+      Util.removeIf(this.selected_series, s => s.id == checkbox.value)
+      return
     }
-    return "values"
+    this.selected_series.push(this.series[checkbox.value])
+  }
+
+  clearSelected() {
+    this.checkboxes.forEach(e => e.nativeElement.checked = false)
+    this.selected_series = []
+  }
+
+  /**
+   * Creates a figure based on selectred series
+   */
+  createFigure() {
+      this.dataService.figures.push(this.selected_series)
+      this.clearSelected()
   }
 }

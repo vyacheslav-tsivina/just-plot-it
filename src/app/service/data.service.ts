@@ -7,9 +7,14 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class DataService {
     series: DataSeries[]
+    series_id_counter: number
+    figures: DataSeries[][]
+
 
     constructor() {
         this.series = []
+        this.figures = []
+        this.series_id_counter = 0
     }
 
     public parseInputIntoSeries(input: string, delimeter: string): string {
@@ -41,6 +46,8 @@ export class DataService {
                 i++
             }
             series.name = this.findNextAvailableName()
+            series.type = this.defineType(series)
+            series.id = this.series_id_counter++
             this.series.push(series)
             n++
         }
@@ -54,13 +61,35 @@ export class DataService {
         indices.push(0) // in case of empty array
         return "series_"+(Math.max(...indices)+1)
     }
+
+    /**
+     * Defines the type of DataSeries, to check compatibility for example
+     * @param series input series
+     */
+    private defineType(series: DataSeries): DataSeriesType {
+        if (series.x) {
+            return DataSeriesType.XY
+        }
+        if (series.labelsX) {
+            return DataSeriesType.CATEGORIES
+        }
+        return DataSeriesType.VALUES
+    }
 }
 
 
 
 export class DataSeries {
+    id: number
     name: string
     labelsX: string[]
     x: number[]
     y: number[]
+    type: DataSeriesType
+}
+
+export enum DataSeriesType{
+    XY = 'x/y',
+    CATEGORIES = 'categories',
+    VALUES = 'values'
 }

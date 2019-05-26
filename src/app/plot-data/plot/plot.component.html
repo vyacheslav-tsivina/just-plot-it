@@ -1,5 +1,12 @@
 <div style="display: block">
-  <canvas>
+  <div class="row">
+    <div class="col-md-9">
+        <canvas #canvas>
           
-  </canvas>
+          </canvas>
+    </div>
+      <div class="col-md-3">
+          <button type="button" class="btn btn-warning" (click)="deleteFigure()">Delete</button>
+      </div>
+  </div>
 </div>

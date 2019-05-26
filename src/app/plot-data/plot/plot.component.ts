@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { DataSeries } from 'src/app/service/data.service';
+import { DataSeries, DataSeriesType, DataService } from 'src/app/service/data.service';
 import * as Chart from 'chart.js';
+import { Util } from 'src/app/util/util';
 
 @Component({
   selector: 'plot',
@@ -9,15 +10,20 @@ import * as Chart from 'chart.js';
 })
 export class PlotComponent implements OnInit {
   @Input("dataSeries")
-  dataSeries : DataSeries
+  dataSeries: DataSeries[]
   chart: Chart
 
-  constructor(public el: ElementRef) { 
-    
+  backgroundColours: string[]
+  borderColor: string[]
+  @ViewChild("canvas")
+  canvas: ElementRef
+  constructor(public el: ElementRef, private dataService: DataService) {
+    this.backgroundColours = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
+    this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
   }
 
   initChart() {
-    var chartType = 'line'
+    var chartType = 'bar'
     var chartOptions
     var labels
     var chartData
@@ -26,51 +32,73 @@ export class PlotComponent implements OnInit {
       scaleShowVerticalLines: true,
       responsive: true,
     }
+    var datasets = []
+    for (var i = 0; i < this.dataSeries.length; i++) {
+      var data = this.getData(this.dataSeries[i])
+      switch (this.dataSeries[i].type) {
+        case DataSeriesType.XY: {
+          chartType = 'scatter'
+          chartOptions.showLine = true
+          break
+        }
+        case DataSeriesType.CATEGORIES: {
+          if (!labels || (this.dataSeries[i].y.length > labels.length)) {
+            labels = this.dataSeries[i].labelsX
+          }
+          break
+        }
+        case DataSeriesType.VALUES: {
+          if (!labels || (this.dataSeries[i].y.length > labels.length)) {
+            labels = Array.from({ length: this.dataSeries[i].y.length }, (v, k) => (k + 1).toString())
+          }
 
-    var data = []
-    // in case we have both x and y
-    if (this.dataSeries.x){
-      chartType = 'scatter'
-      data = this.xyData()
-      chartOptions.showLine  = true
+        }
+      }
+      datasets.push({
+        data: data,
+        label: this.dataSeries[i].name,
+        backgroundColor: this.backgroundColours[i % this.backgroundColours.length],
+        borderColor: this.borderColor[i % this.borderColor.length],
+        showLine: chartType == 'scatter'
+      })
+    }
 
-    }
-    // no x, but labelsX
-    if (this.dataSeries.labelsX){
-      data = this.dataSeries.y
-      labels = this.dataSeries.labelsX
-    }
-    // onlu y, so generate labels
-    if (!this.dataSeries.labelsX && !this.dataSeries.x){
-      data = this.dataSeries.y
-      labels = Array.from({length: this.dataSeries.y.length}, (v, k) => (k+1).toString())
-    }
-    
-    chartData = {datasets:[
-      { data: data, label: this.dataSeries.name, backgroundColor: "rgba(255,221,50,0.2)",borderColor: "rgba(255,221,50,1)", showLine: true}
-    ]}
-    if (labels){
+    chartData = { datasets: datasets }
+    if (labels) {
       chartData.labels = labels
     }
-    this.chart = new Chart(this.el.nativeElement.children[0].children[0], {
-        type: chartType,
-        data: chartData,
-        options: chartOptions,
+    // get canvas element 
+    this.chart = new Chart(this.canvas.nativeElement, {
+      type: chartType,
+      data: chartData,
+      options: chartOptions,
     });
-}
+  }
 
   ngOnInit() {
     this.initChart()
   }
 
-  xyData(): object[] {
+  xyData(series: DataSeries): object[] {
     var data = []
-    for (let i = 0; i < this.dataSeries.y.length; i++) {
-      const y = this.dataSeries.y[i]
-      var x = this.dataSeries.x[i]
-      data.push({x:x, y:y})
+    for (let i = 0; i < series.y.length; i++) {
+      const y = series.y[i]
+      var x = series.x[i]
+      data.push({ x: x, y: y })
     }
     return data
   }
 
+  getData(series: DataSeries) {
+    var data = []
+    switch (series.type) {
+      case DataSeriesType.XY: return this.xyData(series)
+      case DataSeriesType.CATEGORIES: return series.y
+      case DataSeriesType.VALUES: return series.y
+    }
+  }
+
+  deleteFigure() {
+    Util.removeIf(this.dataService.figures, f => f == this.dataSeries)
+  }
 }
