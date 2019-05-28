@@ -83,6 +83,9 @@ export class DataViewComponent {
    * Creates a figure based on selectred series
    */
   createFigure() {
+      if (this.selected_series.length == 0){
+        return
+      }
       this.dataService.figures.push(this.selected_series)
       this.clearSelected()
   }

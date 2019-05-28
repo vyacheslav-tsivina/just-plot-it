@@ -6,7 +6,27 @@
           </canvas>
     </div>
       <div class="col-md-3">
-          <button type="button" class="btn btn-warning" (click)="deleteFigure()">Delete</button>
+          <button type="button" class="btn btn-warning mb-2" (click)="deleteFigure()">Delete</button>
+          <h5>Options</h5>
+          <ngb-accordion #acc="ngbAccordion">
+              <ngb-panel title="Axis" >
+                <ng-template ngbPanelContent>
+                  <div *ngIf="dataSeries[0].type == 'x/y'">
+                      <div>xmin: <input type="number" [(ngModel)]="xmin"></div>
+                      <div>xmax: <input type="number" [(ngModel)]="xmax"></div>
+                  </div>
+                  <div>ymin: <input type="number" [(ngModel)]="ymin"></div>
+                  <div>ymax: <input type="number" [(ngModel)]="ymax"></div>
+                    <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateAxes()"><i class="fa fa-save"></i></button>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel title="Colours" >
+                  <ng-template ngbPanelContent>
+                      Colours config
+                      
+                  </ng-template>
+                </ngb-panel>
+            </ngb-accordion>
       </div>
   </div>
 </div>

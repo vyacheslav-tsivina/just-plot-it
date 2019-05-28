@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { DataSeries, DataSeriesType, DataService } from 'src/app/service/data.service';
 import * as Chart from 'chart.js';
 import { Util } from 'src/app/util/util';
@@ -6,7 +6,8 @@ import { Util } from 'src/app/util/util';
 @Component({
   selector: 'plot',
   templateUrl: './plot.component.html',
-  styleUrls: ['./plot.component.css']
+  styleUrls: ['./plot.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class PlotComponent implements OnInit {
   @Input("dataSeries")
@@ -17,6 +18,14 @@ export class PlotComponent implements OnInit {
   borderColor: string[]
   @ViewChild("canvas")
   canvas: ElementRef
+
+
+  xmin: number
+  xmax: number
+  ymin: number
+  ymax: number
+
+
   constructor(public el: ElementRef, private dataService: DataService) {
     this.backgroundColours = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
     this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
@@ -71,12 +80,27 @@ export class PlotComponent implements OnInit {
     this.chart = new Chart(this.canvas.nativeElement, {
       type: chartType,
       data: chartData,
-      options: chartOptions,
+      options: chartOptions
     });
+
+
   }
 
   ngOnInit() {
     this.initChart()
+  }
+
+  updateAxes() {
+
+    var scales = this.chart.config.options.scales 
+
+    scales.xAxes[0].ticks.min = !isNaN(this.xmin) ? this.xmin : scales.xAxes[0].ticks.min
+    scales.xAxes[0].ticks.max = !isNaN(this.xmax) ? this.xmax : scales.xAxes[0].ticks.max
+    scales.yAxes[0].ticks.min = !isNaN(this.ymin) ? this.ymin : scales.yAxes[0].ticks.min
+    scales.yAxes[0].ticks.max = !isNaN(this.ymax) ? this.ymax : scales.yAxes[0].ticks.max
+
+    this.chart.config.options.scales = scales
+    this.chart.update()
   }
 
   xyData(series: DataSeries): object[] {

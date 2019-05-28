@@ -4,6 +4,7 @@ import { PlotDataComponent } from './plot-data.component';
 import { CommonModule } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 import { PlotComponent } from './plot/plot.component';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { PlotComponent } from './plot/plot.component';
   imports: [
     FormsModule,
     CommonModule,
-    ChartsModule
+    ChartsModule,
+    NgbAccordionModule
   ],
   exports:[
     PlotDataComponent,
