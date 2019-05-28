@@ -7,10 +7,12 @@ import { DataLoaderModule } from './data-loader/data-loader.module';
 import { DataService } from './service/data.service';
 import { DataViewModule } from './data-view/data-view.module';
 import { PlotDataModule } from './plot-data/plot-data.module';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

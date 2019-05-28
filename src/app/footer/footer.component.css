@@ -1,0 +1,18 @@
+.page-footer {
+    background-color: royalblue;
+    color: white;
+}
+
+a:link {
+    color: white;
+}
+
+/* visited link */
+
+a:visited {
+    color: white;
+}
+
+a {
+    text-decoration: underline;
+}

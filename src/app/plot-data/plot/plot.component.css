@@ -4,4 +4,23 @@
 
 .card-body{
     padding: 5px 17px;
+    font-size: 14px;
+}
+
+.card{
+    position: initial !important;
+}
+
+.axis-label{
+    display: inline-block;
+    width: 40px;
+}
+
+.color-picker-container input{
+    width : 25px;
+    height : 25px;
+}
+
+.color-picker-container{
+    display: inline-block
 }

@@ -1,32 +1,51 @@
-<div style="display: block">
-  <div class="row">
-    <div class="col-md-9">
-        <canvas #canvas>
-          
-          </canvas>
-    </div>
-      <div class="col-md-3">
-          <button type="button" class="btn btn-warning mb-2" (click)="deleteFigure()">Delete</button>
-          <h5>Options</h5>
-          <ngb-accordion #acc="ngbAccordion">
-              <ngb-panel title="Axis" >
-                <ng-template ngbPanelContent>
-                  <div *ngIf="dataSeries[0].type == 'x/y'">
-                      <div>xmin: <input type="number" [(ngModel)]="xmin"></div>
-                      <div>xmax: <input type="number" [(ngModel)]="xmax"></div>
-                  </div>
-                  <div>ymin: <input type="number" [(ngModel)]="ymin"></div>
-                  <div>ymax: <input type="number" [(ngModel)]="ymax"></div>
-                    <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateAxes()"><i class="fa fa-save"></i></button>
-                </ng-template>
-              </ngb-panel>
-              <ngb-panel title="Colours" >
-                  <ng-template ngbPanelContent>
-                      Colours config
-                      
-                  </ng-template>
+<div class="mb-5">
+    <div class="row">
+        <div class="col-md-9">
+            <canvas #canvas> 
+
+      </canvas>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-warning mb-2" (click)="deleteFigure()">Delete</button>
+            <h5>Options</h5>
+            <ngb-accordion #acc="ngbAccordion">
+                <ngb-panel title="Axis">
+                    <ng-template ngbPanelContent>
+                        <div *ngIf="dataSeries[0].type == 'x/y'">
+
+                            <div>
+                                <div class="axis-label mb-1">xmin:</div> <input type="number" [(ngModel)]="xmin">
+                            </div>
+                            <div>
+                                <div class="axis-label mb-1">xmax:</div> <input type="number" [(ngModel)]="xmax">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="axis-label mb-1">ymin:</div> <input type="number" [(ngModel)]="ymin">
+                        </div>
+                        <div>
+                            <div class="axis-label mb-1">ymax:</div> <input type="number" [(ngModel)]="ymax">
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateAxes()"><i
+                class="fa fa-save"></i></button>
+                    </ng-template>
+                </ngb-panel>
+                <ngb-panel title="Colors">
+                    <ng-template ngbPanelContent>
+                        Colors config
+
+
+                        <div *ngFor="let d of colors; let i = index">
+                            {{dataSeries[i].name}} <br/>
+                            <div class="color-picker-container">
+                                background: <input [(colorPicker)]="d.back" [style.background]="d.back" /> line: <input [(colorPicker)]="d.line" [style.background]="d.line" />
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateColors()"><i
+              class="fa fa-save"></i></button>
+                    </ng-template>
                 </ngb-panel>
             </ngb-accordion>
-      </div>
-  </div>
+        </div>
+    </div>
 </div>

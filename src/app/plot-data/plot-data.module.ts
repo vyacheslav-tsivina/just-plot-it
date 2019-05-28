@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ChartsModule } from 'ng2-charts';
 import { PlotComponent } from './plot/plot.component';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -16,7 +16,8 @@ import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     CommonModule,
     ChartsModule,
-    NgbAccordionModule
+    NgbAccordionModule,
+    ColorPickerModule
   ],
   exports:[
     PlotDataComponent,

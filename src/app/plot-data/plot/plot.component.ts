@@ -14,7 +14,7 @@ export class PlotComponent implements OnInit {
   dataSeries: DataSeries[]
   chart: Chart
 
-  backgroundColours: string[]
+  backgroundColors: string[]
   borderColor: string[]
   @ViewChild("canvas")
   canvas: ElementRef
@@ -25,10 +25,13 @@ export class PlotComponent implements OnInit {
   ymin: number
   ymax: number
 
+  colors: {back: string, line: string}[]
+
 
   constructor(public el: ElementRef, private dataService: DataService) {
-    this.backgroundColours = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
+    this.backgroundColors = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
     this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
+    this.colors = []
   }
 
   initChart() {
@@ -66,10 +69,11 @@ export class PlotComponent implements OnInit {
       datasets.push({
         data: data,
         label: this.dataSeries[i].name,
-        backgroundColor: this.backgroundColours[i % this.backgroundColours.length],
+        backgroundColor: this.backgroundColors[i % this.backgroundColors.length],
         borderColor: this.borderColor[i % this.borderColor.length],
         showLine: chartType == 'scatter'
       })
+      this.colors.push({back: this.backgroundColors[i % this.backgroundColors.length], line: this.borderColor[i % this.borderColor.length]})
     }
 
     chartData = { datasets: datasets }
@@ -100,6 +104,17 @@ export class PlotComponent implements OnInit {
     scales.yAxes[0].ticks.max = !isNaN(this.ymax) ? this.ymax : scales.yAxes[0].ticks.max
 
     this.chart.config.options.scales = scales
+    this.chart.update()
+  }
+
+  updateColors() {
+    var datasets = this.chart.data.datasets
+    for (let i = 0; i < this.colors.length; i++) {
+      const color = this.colors[i];
+      datasets[i].backgroundColor = color.back
+      datasets[i].borderColor = color.line
+    }
+    this.chart.data.datasets = datasets
     this.chart.update()
   }
 
