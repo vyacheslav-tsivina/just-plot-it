@@ -22,3 +22,7 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
+.input-tooltip .tooltip-inner{
+    max-width: none;
+}

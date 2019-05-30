@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, ViewEncapsulation } fr
 import { DataSeries, DataSeriesType, DataService } from 'src/app/service/data.service';
 import * as Chart from 'chart.js';
 import { Util } from 'src/app/util/util';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'plot',
@@ -25,10 +26,10 @@ export class PlotComponent implements OnInit {
   ymin: number
   ymax: number
 
-  colors: {back: string, line: string}[]
+  colors: { back: string, line: string }[]
 
 
-  constructor(public el: ElementRef, private dataService: DataService) {
+  constructor(public el: ElementRef, public dataService: DataService) {
     this.backgroundColors = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
     this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
     this.colors = []
@@ -45,12 +46,15 @@ export class PlotComponent implements OnInit {
       responsive: true,
     }
     var datasets = []
+
     for (var i = 0; i < this.dataSeries.length; i++) {
+      var alpha = 1
       var data = this.getData(this.dataSeries[i])
       switch (this.dataSeries[i].type) {
         case DataSeriesType.XY: {
           chartType = 'scatter'
           chartOptions.showLine = true
+          alpha = 0.5
           break
         }
         case DataSeriesType.CATEGORIES: {
@@ -66,14 +70,16 @@ export class PlotComponent implements OnInit {
 
         }
       }
+      var backColor = Util.hexToRgbA(this.backgroundColors[i % this.backgroundColors.length], alpha)
+      var borderColor = Util.hexToRgbA(this.borderColor[i % this.borderColor.length], 1)
       datasets.push({
         data: data,
         label: this.dataSeries[i].name,
-        backgroundColor: this.backgroundColors[i % this.backgroundColors.length],
-        borderColor: this.borderColor[i % this.borderColor.length],
+        backgroundColor: backColor,
+        borderColor: borderColor,
         showLine: chartType == 'scatter'
       })
-      this.colors.push({back: this.backgroundColors[i % this.backgroundColors.length], line: this.borderColor[i % this.borderColor.length]})
+      this.colors.push({ back: backColor, line: borderColor })
     }
 
     chartData = { datasets: datasets }
@@ -96,7 +102,7 @@ export class PlotComponent implements OnInit {
 
   updateAxes() {
 
-    var scales = this.chart.config.options.scales 
+    var scales = this.chart.config.options.scales
 
     scales.xAxes[0].ticks.min = !isNaN(this.xmin) ? this.xmin : scales.xAxes[0].ticks.min
     scales.xAxes[0].ticks.max = !isNaN(this.xmax) ? this.xmax : scales.xAxes[0].ticks.max
@@ -139,5 +145,54 @@ export class PlotComponent implements OnInit {
 
   deleteFigure() {
     Util.removeIf(this.dataService.figures, f => f == this.dataSeries)
+  }
+
+  export(type) {
+    //create a dummy CANVAS
+    var srcCanvas = this.chart.canvas
+    var destinationCanvas = document.createElement("canvas");
+    destinationCanvas.width = srcCanvas.width;
+    destinationCanvas.height = srcCanvas.height;
+
+    var destCtx = destinationCanvas.getContext('2d');
+    if (type == 'jpeg') {
+      //create a rectangle with the desired color
+      destCtx.fillStyle = "#FFFFFF";
+      destCtx.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
+
+
+    }
+
+    //draw the original canvas onto the destination canvas
+    destCtx.drawImage(srcCanvas, 0, 0);
+    //finally use the destinationCanvas.toDataURL() method to get the desired output;
+    destinationCanvas.toDataURL();
+    var url = destinationCanvas.toDataURL(type == 'jpeg' ? 'image/jpeg' : 'image/png', 1.0)
+    saveAs(this.dataURItoBlob(url), "plot." + type)
+  }
+
+  dataURItoBlob(dataURI) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+
+    // create a view into the buffer
+    var ia = new Uint8Array(ab);
+
+    // set the bytes of the buffer to the correct values
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    // write the ArrayBuffer to a blob, and you're done
+    var blob = new Blob([ab], { type: mimeString });
+    return blob;
+
   }
 }

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataLoaderComponent } from './data-loader.component';
 import { CommonModule } from '@angular/common';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import { CommonModule } from '@angular/common';
   ],
   imports: [
     FormsModule,
-    CommonModule
+    CommonModule,
+    NgbTooltipModule
   ],
   exports:[
     DataLoaderComponent

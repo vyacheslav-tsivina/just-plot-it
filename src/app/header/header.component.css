@@ -1,0 +1,27 @@
+header{
+    background-color: royalblue
+}
+
+.navbar{
+    background-color: royalblue;
+    color: white;
+    font-weight: 600;
+}
+
+a:link {
+    color: white;
+}
+
+/* visited link */
+
+a:visited {
+    color: white;
+}
+
+a {
+    text-decoration: underline;
+}
+
+.logo-img {
+    max-height:30px;
+}

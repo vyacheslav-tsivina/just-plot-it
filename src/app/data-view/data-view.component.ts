@@ -24,6 +24,7 @@ export class DataViewComponent {
 
   eraseAll() {
     this.dataService.series = []
+    this.dataService.figures = []
     this.series = this.dataService.series
     this.dataService.series_id_counter = 0
   }
@@ -83,10 +84,10 @@ export class DataViewComponent {
    * Creates a figure based on selectred series
    */
   createFigure() {
-      if (this.selected_series.length == 0){
-        return
-      }
-      this.dataService.figures.push(this.selected_series)
-      this.clearSelected()
+    if (this.selected_series.length == 0) {
+      return
+    }
+    this.dataService.figures.push(this.selected_series)
+    this.clearSelected()
   }
 }

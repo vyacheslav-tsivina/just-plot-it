@@ -7,21 +7,23 @@ import { DataService } from '../service/data.service';
   styleUrls: ['./data-loader.component.css']
 })
 export class DataLoaderComponent {
+
   input_text: string
   delimiter: string
   errorMessage: string
+
   constructor(private dataService: DataService) {
-      this.delimiter = ","
+    this.delimiter = ","
   }
 
   loadData(): void {
-      var error = this.dataService.parseInputIntoSeries(this.input_text, this.delimiter)
-      if (error.length > 0){
-        this.errorMessage = error
-      }
+    var error = this.dataService.parseInputIntoSeries(this.input_text, this.delimiter)
+    if (error.length > 0) {
+      this.errorMessage = error
+    }
   }
 
-  clearInput(){
+  clearInput() {
     this.input_text = ""
   }
 }

@@ -10,7 +10,7 @@ export class PlotDataComponent {
   series: DataSeries[]
 
   
-  constructor(private dataService: DataService) {
+  constructor(public dataService: DataService) {
 
   }
 

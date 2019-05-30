@@ -2,15 +2,16 @@
 <ng-template #tipContent>
     <div style="text-align: left">
         series has: <br />
-        - 'x,y' - both x and y <br />
-        - 'categories' - values and labels <br />
-        - 'values' - only values
+        &ndash; 'x,y' - both x and y <br />
+        &ndash; 'categories' - values and labels <br />
+        &ndash; 'values' - only values
     </div>
 
 </ng-template>
 <button type="button" class="btn btn-danger mr-2" (click)="eraseAll()">Erase All Series</button>
 <button type="button" class="btn btn-warning" (click)="clearSelected()">Clear Selected</button>
 <div class="form-check">
+    <h6 *ngIf="series.length > 0" class="mt-3">Select series to plot:</h6>
     <div *ngFor="let s of series">
         <input #checkbox type="checkbox" class="form-check-input" name="series_chosen" value="{{s.id}}"
             (change)="checkValue($event)">
