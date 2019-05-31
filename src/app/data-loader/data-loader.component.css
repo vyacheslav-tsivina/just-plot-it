@@ -3,3 +3,9 @@
     white-space: nowrap;
     font-size: 12px;
 }
+
+.format-tooltip {
+    font-size: 13px;
+    color: grey;
+    text-decoration: underline
+}

@@ -20,6 +20,8 @@ export class DataLoaderComponent {
     var error = this.dataService.parseInputIntoSeries(this.input_text, this.delimiter)
     if (error.length > 0) {
       this.errorMessage = error
+    } else {
+      this.errorMessage = undefined
     }
   }
 

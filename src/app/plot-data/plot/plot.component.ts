@@ -26,17 +26,33 @@ export class PlotComponent implements OnInit {
   ymin: number
   ymax: number
 
+  titleInput: string
+  xLabelInput: string
+  yLabelInput: string
+  xUnitsInput: string
+  yUnitsInput: string
+
   colors: { back: string, line: string }[]
+
+  chartTypes: { id: string, label: string }[]
+  selectedChartType: string
 
 
   constructor(public el: ElementRef, public dataService: DataService) {
     this.backgroundColors = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
     this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
+    this.chartTypes = [{ id: "bar", label: "Bar" },
+    { id: "line", label: "Line" },
+    // { id: "radar", label: "Radar" },
+    // { id: 'pie', label: 'Pie' },
+    // { id: 'doughnut', label: 'Doughnut' },
+    // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
+    ]
     this.colors = []
   }
 
-  initChart() {
-    var chartType = 'bar'
+  initChart(chartType = 'bar') {
+
     var chartOptions
     var labels
     var chartData
@@ -46,15 +62,15 @@ export class PlotComponent implements OnInit {
       responsive: true,
     }
     var datasets = []
-
+    this.colors = []
     for (var i = 0; i < this.dataSeries.length; i++) {
       var alpha = 1
       var data = this.getData(this.dataSeries[i])
       switch (this.dataSeries[i].type) {
         case DataSeriesType.XY: {
           chartType = 'scatter'
-          chartOptions.showLine = true
-          alpha = 0.5
+          
+          // chartOptions.showLine = true
           break
         }
         case DataSeriesType.CATEGORIES: {
@@ -70,14 +86,29 @@ export class PlotComponent implements OnInit {
 
         }
       }
-      var backColor = Util.hexToRgbA(this.backgroundColors[i % this.backgroundColors.length], alpha)
-      var borderColor = Util.hexToRgbA(this.borderColor[i % this.borderColor.length], 1)
+      if (chartType == 'scatter' || chartType == 'line'){
+        alpha = 0.5
+      }
+      var backColor
+      var borderColor
+      // for pie and doughnut each category should have it's own color
+      if (chartType == 'pie' || chartType == 'doughnut') {
+        backColor = []
+        borderColor = []
+        for (let j = 0; j < labels.length; j++) {
+          backColor.push(Util.hexToRgbA(this.backgroundColors[j % this.backgroundColors.length], alpha))
+          borderColor.push(Util.hexToRgbA(this.borderColor[i % this.borderColor.length], 1))
+        }
+      } else {
+        backColor = Util.hexToRgbA(this.backgroundColors[i % this.backgroundColors.length], alpha)
+        borderColor = Util.hexToRgbA(this.borderColor[i % this.borderColor.length], 1)
+      }
       datasets.push({
         data: data,
         label: this.dataSeries[i].name,
         backgroundColor: backColor,
         borderColor: borderColor,
-        showLine: chartType == 'scatter'
+        showLine: true
       })
       this.colors.push({ back: backColor, line: borderColor })
     }
@@ -86,7 +117,10 @@ export class PlotComponent implements OnInit {
     if (labels) {
       chartData.labels = labels
     }
-    // get canvas element 
+    // in case we change chartType we need to redraw everything
+    if (this.chart) {
+      this.chart.destroy()
+    }
     this.chart = new Chart(this.canvas.nativeElement, {
       type: chartType,
       data: chartData,
@@ -146,6 +180,61 @@ export class PlotComponent implements OnInit {
   deleteFigure() {
     Util.removeIf(this.dataService.figures, f => f == this.dataSeries)
   }
+
+  stackedCategories(checked) {
+    for (var i = 0; i < this.chart.config.options.scales.xAxes.length; i++) {
+      this.chart.config.options.scales.xAxes[i].stacked = checked
+    }
+    for (var i = 0; i < this.chart.config.options.scales.yAxes.length; i++) {
+      this.chart.config.options.scales.yAxes[i].stacked = checked
+    }
+    this.chart.update()
+  }
+
+
+  updateLabels() {
+    this.chart.config.options.title = {
+      display: this.titleInput && this.titleInput.length > 0,
+      text: this.titleInput
+    }
+    var scales = this.chart.config.options.scales
+    scales.xAxes[0].scaleLabel = {
+      display: this.xLabelInput && this.xLabelInput.length > 0,
+      labelString: this.xLabelInput
+    }
+    scales.yAxes[0].scaleLabel = {
+      display: this.yLabelInput && this.yLabelInput.length > 0,
+      labelString: this.yLabelInput
+    }
+    if (this.xUnitsInput) {
+      scales.xAxes[0].ticks.userCallback = (tick) => {
+        return tick.toString() + this.xUnitsInput
+      }
+    }
+    if (this.yUnitsInput) {
+      scales.yAxes[0].ticks.userCallback = (tick) => {
+        return tick.toString() + this.yUnitsInput
+      }
+    }
+
+    this.chart.update()
+  }
+
+  logarithmicScale(checked, axes) {
+    if (axes == 'x') {
+      this.chart.config.options.scales.xAxes[0].type = checked ? 'logarithmic' : 'linear'
+    } else {
+      this.chart.config.options.scales.yAxes[0].type = checked ? 'logarithmic' : 'linear'
+    }
+    this.chart.update()
+  }
+
+  changeChartType() {
+    this.initChart(this.selectedChartType)
+    console.log('change')
+  }
+
+
 
   export(type) {
     //create a dummy CANVAS

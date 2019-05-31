@@ -22,8 +22,12 @@ export class DataService {
             return ""
         }
         var lines = input.split('\n')
-        var n = 1;
-        for (let i = 0; i < lines.length; i++) {
+        var n = 1
+        var start = 0
+        while(start < lines.length-1 && lines[start].length == 0 ){
+            start++
+        }
+        for (let i = start; i < lines.length; i++) {
             var line = lines[i];
             var series = new DataSeries
             var sp = line.split(delimeter)

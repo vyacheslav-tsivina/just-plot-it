@@ -24,3 +24,8 @@
 .color-picker-container{
     display: inline-block
 }
+
+.info-message{
+    color: grey;
+    font-size: 12px;
+}

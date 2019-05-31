@@ -11,7 +11,7 @@
 <button type="button" class="btn btn-danger mr-2" (click)="eraseAll()">Erase All Series</button>
 <button type="button" class="btn btn-warning" (click)="clearSelected()">Clear Selected</button>
 <div class="form-check">
-    <h6 *ngIf="series.length > 0" class="mt-3">Select series to plot:</h6>
+    <h6 *ngIf="series.length > 0" class="mt-3">Select series to plot (they have to be of the same type):</h6>
     <div *ngFor="let s of series">
         <input #checkbox type="checkbox" class="form-check-input" name="series_chosen" value="{{s.id}}"
             (change)="checkValue($event)">

@@ -4,24 +4,25 @@
         series can be: <br />
         &ndash; 'x,y' - two lines, first for y, second for x: <br />
         15,7,-3,10<br />
-        -20,-10,0,8.5<br />
+        -20,-10,0,8.5<br /><br />
         &ndash; 'categories' - two lines, first for y, second for categories' names:<br />
         7,42,13<br />
-        Monday,Tuesday,Wednesday<br />
+        Monday,Tuesday,Wednesday<br /><br />
         &ndash; 'values' - only values, one line:<br />
         7,42,13<br/>
         <br/>
-        <b>You can put as many series as you want separates by an empty line</b>
+        <b>You can put as many series as you want separated by an empty line</b>
     </div>
 
 </ng-template>
 <div class="mb-2">
     <div class="form-group">
-        <input class="form-control" type="text" placeholder="Delimiter" [(ngModel)]="delimiter">
+            <label for="delimiterInput">Delimiter</label>
+        <input class="form-control" type="text" placeholder="Delimiter" [(ngModel)]="delimiter" id="delimiterInput">
     </div>
     <div class="form-group">
-        <label for="dataInputArea">Input series</label><i class="fa fa-question-circle ml-1" placement="right"
-            [ngbTooltip]="tipContent" tooltipClass="input-tooltip"></i>
+        <label for="dataInputArea">Input series </label>&nbsp;<span class="format-tooltip" placement="right"
+        [ngbTooltip]="tipContent" tooltipClass="input-tooltip">data format<i class="fa fa-question-circle ml-1" ></i></span>
         <button type="button" class="btn btn-warning ml-2 mb-2" (click)="clearInput()"> <i
                 class="glyphicon glyphicon-eye-close"></i>Clear</button>
         <textarea #textarea class="form-control" id="dataInputArea" rows="10" [(ngModel)]="input_text">

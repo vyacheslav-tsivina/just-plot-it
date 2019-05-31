@@ -42,6 +42,7 @@ export class DataViewComponent {
     this.active_series = series
     input.hidden = false
     input.value = span.innerText
+    input.select()
   }
 
   onInputKeydown(event) {
