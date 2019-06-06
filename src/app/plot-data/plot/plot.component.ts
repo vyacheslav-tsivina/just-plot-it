@@ -126,8 +126,6 @@ export class PlotComponent implements OnInit {
       data: chartData,
       options: chartOptions
     });
-
-
   }
 
   ngOnInit() {
@@ -234,7 +232,20 @@ export class PlotComponent implements OnInit {
     console.log('change')
   }
 
-
+  /**
+   * @deprecated removing the line doesn't remove back
+   */
+  changeShowLine(event){
+     var id = event.target.value
+     var checked = event.target.checked
+     this.chart.config.data.datasets[id].showLine = checked
+     if (!checked){
+       delete this.chart.data.datasets[id].borderColor
+     } else{
+       this.chart.config.data.datasets[id].borderColor = this.colors[id].line
+     }
+     this.chart.update()
+  }
 
   export(type) {
     //create a dummy CANVAS

@@ -12,9 +12,11 @@
                 <ngb-panel title="Chart Type" *ngIf="dataSeries[0].type != 'x/y'">
                     <ng-template ngbPanelContent>
                         <div>
-                            Chart Type <span class="info-message">(will reset other configuration like colors and labels)</span>
+                            Chart Type <span class="info-message">(will reset other configuration like colors and
+                                labels)</span>
                             <select [(ngModel)]="selectedChartType" class="form-control" (change)="changeChartType()">
-                                <option *ngFor="let type of chartTypes" value="{{type.id}}" [selected]="type.id == 'bar'">{{type.label}}</option>
+                                <option *ngFor="let type of chartTypes" value="{{type.id}}"
+                                    [selected]="type.id == 'bar'">{{type.label}}</option>
                             </select>
                         </div>
                     </ng-template>
@@ -73,7 +75,20 @@
                         </div>
                     </ng-template>
                 </ngb-panel>
-
+                <!-- Doesn't work for now -->
+                <!-- <ngb-panel title="Configuration">
+                    <ng-template ngbPanelContent>
+                        <div>
+                            Show line<br>
+                            <div *ngFor="let s of dataSeries" class="series-configuration">
+                                    <input #checkbox type="checkbox" class="form-check-input" name="series_chosen"
+                                    value="{{s.id}}" (change)="changeShowLine($event)" checked="true">
+                                <div #series_div class="series-name">{{s.name}}</div>
+                            </div>
+                            
+                        </div>
+                    </ng-template>
+                </ngb-panel> -->
 
                 <!-- Let it be the last one -->
                 <ngb-panel title="Export">
