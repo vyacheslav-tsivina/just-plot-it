@@ -21,7 +21,7 @@
                         </div>
                     </ng-template>
                 </ngb-panel>
-                <ngb-panel title="Axis">
+                <ngb-panel title="Axis" *ngIf="chartType == 'bar' || chartType == 'scatter' || chartType == 'line'">
                     <ng-template ngbPanelContent>
                         <div *ngIf="dataSeries[0].type == 'x/y'">
 
@@ -50,13 +50,30 @@
                 </ngb-panel>
                 <ngb-panel title="Colors">
                     <ng-template ngbPanelContent>
-                        <div *ngFor="let d of colors; let i = index">
-                            {{dataSeries[i].name}} <br />
-                            <div class="color-picker-container">
-                                background: <input [(colorPicker)]="d.back" [style.background]="d.back" /> line: <input
-                                    [(colorPicker)]="d.line" [style.background]="d.line" />
+                        <div *ngIf="chartType == 'pie' || chartType == 'doughnut' ; else colorsElseBlock">
+                            <div *ngFor="let d of colors; let i = index">
+                                <b>{{dataSeries[i].name}}</b> <br />
+                                <div *ngFor="let j of labelsKeysArray(dataSeries[i])" class="color-picker-container">
+                                    {{dataSeries[i].labelsX[j]}}<br>
+                                    background: <input [(colorPicker)]="d.back[j]" [style.background]="d.back[j]" />
+                                    line:
+                                    <input [(colorPicker)]="d.line[j]" [style.background]="d.line[j]" />
+                                </div>
                             </div>
                         </div>
+                        <ng-template #colorsElseBlock>
+                            <div>
+                                <div *ngFor="let d of colors; let i = index">
+                                    {{dataSeries[i].name}} <br />
+                                    <div class="color-picker-container">
+                                        background: <input [(colorPicker)]="d.back" [style.background]="d.back" /> line:
+                                        <input [(colorPicker)]="d.line" [style.background]="d.line" />
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+
+
                         <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateColors()"><i
                                 class="fa fa-save"></i></button>
                     </ng-template>
@@ -65,11 +82,14 @@
                     <ng-template ngbPanelContent>
                         <div>
                             Chart title <input type="text" [(ngModel)]="titleInput" class="mb-1"> <br>
-                            X label <input type="text" [(ngModel)]="xLabelInput" class="mb-1"> <br>
-                            Y label <input type="text" [(ngModel)]="yLabelInput" class="mb-1"> <br>
-                            <span *ngIf="dataSeries[0].type == 'x/y'">
-                                X units <input type="text" [(ngModel)]="xUnitsInput" class="mb-1"><br /></span>
-                            Y units <input type="text" [(ngModel)]="yUnitsInput" class="mb-1"><br />
+                            <div *ngIf="chartType == 'bar' || chartType == 'scatter' || chartType == 'line' ">
+                                X label <input type="text" [(ngModel)]="xLabelInput" class="mb-1"> <br>
+                                Y label <input type="text" [(ngModel)]="yLabelInput" class="mb-1"> <br>
+                                <span *ngIf="dataSeries[0].type == 'x/y'">
+                                    X units <input type="text" [(ngModel)]="xUnitsInput" class="mb-1"><br /></span>
+                                Y units <input type="text" [(ngModel)]="yUnitsInput" class="mb-1"><br />
+                            </div>
+
                             <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateLabels()"><i
                                     class="fa fa-save"></i></button>
                         </div>

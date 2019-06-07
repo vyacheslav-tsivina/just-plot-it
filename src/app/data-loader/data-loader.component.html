@@ -1,4 +1,4 @@
-<h4>Data input</h4>
+<h4>Data Input</h4>
 <ng-template #tipContent>
     <div style="text-align: left; white-space:nowrap; max-width:none;">
         series can be: <br />
@@ -27,11 +27,11 @@
         <button type="button" class="btn btn-warning ml-2 mb-2" (click)="clearInput()"> <i
                 class="glyphicon glyphicon-eye-close"></i>Clear</button>
         <button type="button" class="btn btn-info ml-2 mb-2" (click)="dummyData()"> <i
-                class="glyphicon glyphicon-eye-close"></i>Add dummy data</button>
+                class="glyphicon glyphicon-eye-close"></i>Add Dummy Data</button>
         <textarea #textarea class="form-control" id="dataInputArea" rows="10" [(ngModel)]="input_text">
         </textarea>
         <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{errorMessage}}</div>
     </div>
 
-    <button type="button" class="btn btn-primary" (click)="loadData()">Load data</button>
+    <button type="button" class="btn btn-primary" (click)="loadData()">Load Data</button>
 </div>

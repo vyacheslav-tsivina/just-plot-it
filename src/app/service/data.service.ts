@@ -51,6 +51,10 @@ export class DataService {
             }
             series.name = this.findNextAvailableName()
             series.type = this.defineType(series)
+            if (series.type == DataSeriesType.VALUES){
+                series.labelsX = Array.from({ length: series.y.length }, (v, k) => (k + 1).toString())
+            }
+            
             series.id = this.series_id_counter++
             this.series.push(series)
             n++

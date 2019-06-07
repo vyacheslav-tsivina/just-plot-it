@@ -1,0 +1,11 @@
+.faq {
+	counter-reset: my-badass-counter;
+}
+.faq dt:before {
+	content: counter(my-badass-counter) ". ";
+	counter-increment: my-badass-counter;
+}
+
+.faq dt{
+    font-size: 24px
+}

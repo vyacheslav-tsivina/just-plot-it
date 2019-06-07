@@ -35,6 +35,7 @@ export class PlotComponent implements OnInit {
   colors: { back: string, line: string }[]
 
   chartTypes: { id: string, label: string }[]
+  chartType: string //current chart type
   selectedChartType: string
 
 
@@ -43,16 +44,16 @@ export class PlotComponent implements OnInit {
     this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
     this.chartTypes = [{ id: "bar", label: "Bar" },
     { id: "line", label: "Line" },
-    // { id: "radar", label: "Radar" },
-    // { id: 'pie', label: 'Pie' },
-    // { id: 'doughnut', label: 'Doughnut' },
+    { id: "radar", label: "Radar" },
+    { id: 'pie', label: 'Pie' },
+    { id: 'doughnut', label: 'Doughnut' },
     // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
     ]
     this.colors = []
   }
 
   initChart(chartType = 'bar') {
-
+    
     var chartOptions
     var labels
     var chartData
@@ -73,20 +74,14 @@ export class PlotComponent implements OnInit {
           // chartOptions.showLine = true
           break
         }
-        case DataSeriesType.CATEGORIES: {
+        case DataSeriesType.CATEGORIES: 
+        case DataSeriesType.VALUES: {
           if (!labels || (this.dataSeries[i].y.length > labels.length)) {
             labels = this.dataSeries[i].labelsX
           }
-          break
-        }
-        case DataSeriesType.VALUES: {
-          if (!labels || (this.dataSeries[i].y.length > labels.length)) {
-            labels = Array.from({ length: this.dataSeries[i].y.length }, (v, k) => (k + 1).toString())
-          }
-
         }
       }
-      if (chartType == 'scatter' || chartType == 'line'){
+      if (chartType == 'scatter' || chartType == 'line' || chartType == 'radar'){
         alpha = 0.5
       }
       var backColor
@@ -97,7 +92,7 @@ export class PlotComponent implements OnInit {
         borderColor = []
         for (let j = 0; j < labels.length; j++) {
           backColor.push(Util.hexToRgbA(this.backgroundColors[j % this.backgroundColors.length], alpha))
-          borderColor.push(Util.hexToRgbA(this.borderColor[i % this.borderColor.length], 1))
+          borderColor.push(Util.hexToRgbA(this.borderColor[j % this.borderColor.length], 1))
         }
       } else {
         backColor = Util.hexToRgbA(this.backgroundColors[i % this.backgroundColors.length], alpha)
@@ -121,6 +116,7 @@ export class PlotComponent implements OnInit {
     if (this.chart) {
       this.chart.destroy()
     }
+    this.chartType = chartType
     this.chart = new Chart(this.canvas.nativeElement, {
       type: chartType,
       data: chartData,
@@ -196,6 +192,10 @@ export class PlotComponent implements OnInit {
       text: this.titleInput
     }
     var scales = this.chart.config.options.scales
+    if (!scales){
+      this.chart.update()
+      return
+    }
     scales.xAxes[0].scaleLabel = {
       display: this.xLabelInput && this.xLabelInput.length > 0,
       labelString: this.xLabelInput
@@ -230,6 +230,13 @@ export class PlotComponent implements OnInit {
   changeChartType() {
     this.initChart(this.selectedChartType)
     console.log('change')
+  }
+
+  /**
+   * Just solve some strange ANgular problem with binding by creating a new array
+   */
+  labelsKeysArray(dataSeries: DataSeries){
+    return Array.from(dataSeries.labelsX.keys())
   }
 
   /**
