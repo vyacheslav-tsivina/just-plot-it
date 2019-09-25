@@ -47,13 +47,17 @@ export class DataViewComponent {
 
   onInputKeydown(event) {
     if (event.key === "Enter") {
-      this.active_input.hidden = true
-      this.active_div.hidden = false
-      this.active_series.name = this.active_input.value
-      this.active_input = undefined
-      this.active_span = undefined
-      this.active_series = undefined
+      this.stopInputSeriesName()
     }
+  }
+
+  stopInputSeriesName(){
+    this.active_input.hidden = true
+    this.active_div.hidden = false
+    this.active_series.name = this.active_input.value
+    this.active_input = undefined
+    this.active_span = undefined
+    this.active_series = undefined
   }
 
 

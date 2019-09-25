@@ -3,6 +3,7 @@ import { DataSeries, DataSeriesType, DataService } from 'src/app/service/data.se
 import * as Chart from 'chart.js';
 import { Util } from 'src/app/util/util';
 import { saveAs } from 'file-saver';
+import "chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js";
 
 @Component({
   selector: 'plot',
@@ -47,6 +48,7 @@ export class PlotComponent implements OnInit {
     { id: "radar", label: "Radar" },
     { id: 'pie', label: 'Pie' },
     { id: 'doughnut', label: 'Doughnut' },
+    { id: 'violin', label:'Violin'}
     // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
     ]
     this.colors = []
@@ -84,6 +86,7 @@ export class PlotComponent implements OnInit {
       if (chartType == 'scatter' || chartType == 'line' || chartType == 'radar'){
         alpha = 0.5
       }
+      
       var backColor
       var borderColor
       // for pie and doughnut each category should have it's own color
@@ -112,6 +115,15 @@ export class PlotComponent implements OnInit {
     if (labels) {
       chartData.labels = labels
     }
+    // violin works differently, maybe later make it more convenient
+    if (chartType == 'violin'){
+      chartData.labels = ['violin']
+      for(var i=0; i < chartData.datasets.length; i++){
+        chartData.datasets[i].data = [chartData.datasets[i].data]
+      }
+      
+    }
+
     // in case we change chartType we need to redraw everything
     if (this.chart) {
       this.chart.destroy()

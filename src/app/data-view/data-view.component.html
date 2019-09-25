@@ -18,7 +18,7 @@
         <div #series_div class="series-name" (click)="editName(series_name, series_div, name_input, s)"><span
                 #series_name>{{s.name}}</span> <span class="series-type" placement="right" [ngbTooltip]="tipContent">
                 type: <span>{{s.type}}</span></span></div>
-        <input #name_input type="text" hidden="true" (keydown)="onInputKeydown($event)">
+        <input #name_input type="text" hidden="true" (keydown)="onInputKeydown($event)" (blur)="stopInputSeriesName()">
     </div>
 </div>
 
