@@ -8,7 +8,7 @@ all values one by one or load csv file. It is too long for such simple thing.
 I wanted to make sure that with this tool you will the the result after ctrl-v and 2-3 mouse clicks.
 
 # Where is it?
-Visit https://just-plot-it.com/ and try it youself
+Visit https://vtsyvina.github.io/just-plot-it/ and try it youself
 
 # Local development
 As easy as possible:
