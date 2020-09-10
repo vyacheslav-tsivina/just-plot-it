@@ -95,20 +95,19 @@
                         </div>
                     </ng-template>
                 </ngb-panel>
-                <!-- Doesn't work for now -->
-                <!-- <ngb-panel title="Configuration">
+                <ngb-panel title="Configuration">
                     <ng-template ngbPanelContent>
                         <div>
                             Show line<br>
-                            <div *ngFor="let s of dataSeries" class="series-configuration">
+                            <div *ngFor="let s of dataSeries; let indexOfelement=index;" class="series-configuration">
                                     <input #checkbox type="checkbox" class="form-check-input" name="series_chosen"
-                                    value="{{s.id}}" (change)="changeShowLine($event)" checked="true">
+                                    value="{{indexOfelement}}" (change)="changeShowLine($event)" checked="true">
                                 <div #series_div class="series-name">{{s.name}}</div>
                             </div>
                             
                         </div>
                     </ng-template>
-                </ngb-panel> -->
+                </ngb-panel>
 
                 <!-- Let it be the last one -->
                 <ngb-panel title="Export">

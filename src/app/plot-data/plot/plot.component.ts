@@ -48,14 +48,14 @@ export class PlotComponent implements OnInit {
     { id: "radar", label: "Radar" },
     { id: 'pie', label: 'Pie' },
     { id: 'doughnut', label: 'Doughnut' },
-    { id: 'violin', label:'Violin'}
-    // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
+    { id: 'violin', label: 'Violin' }
+      // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
     ]
     this.colors = []
   }
 
   initChart(chartType = 'bar') {
-    
+
     var chartOptions
     var labels
     var chartData
@@ -72,21 +72,21 @@ export class PlotComponent implements OnInit {
       switch (this.dataSeries[i].type) {
         case DataSeriesType.XY: {
           chartType = 'scatter'
-          
+
           // chartOptions.showLine = true
           break
         }
-        case DataSeriesType.CATEGORIES: 
+        case DataSeriesType.CATEGORIES:
         case DataSeriesType.VALUES: {
           if (!labels || (this.dataSeries[i].y.length > labels.length)) {
             labels = this.dataSeries[i].labelsX
           }
         }
       }
-      if (chartType == 'scatter' || chartType == 'line' || chartType == 'radar'){
+      if (chartType == 'scatter' || chartType == 'line' || chartType == 'radar') {
         alpha = 0.5
       }
-      
+
       var backColor
       var borderColor
       // for pie and doughnut each category should have it's own color
@@ -106,7 +106,8 @@ export class PlotComponent implements OnInit {
         label: this.dataSeries[i].name,
         backgroundColor: backColor,
         borderColor: borderColor,
-        showLine: true
+        showLine: true,
+        fill: true
       })
       this.colors.push({ back: backColor, line: borderColor })
     }
@@ -116,24 +117,27 @@ export class PlotComponent implements OnInit {
       chartData.labels = labels
     }
     // violin works differently, maybe later make it more convenient
-    if (chartType == 'violin'){
+    if (chartType == 'violin') {
       chartData.labels = ['violin']
-      for(var i=0; i < chartData.datasets.length; i++){
+      for (var i = 0; i < chartData.datasets.length; i++) {
         chartData.datasets[i].data = [chartData.datasets[i].data]
       }
-      
+
     }
 
-    // in case we change chartType we need to redraw everything
+    this.drawChartFromScratch({
+      type: chartType,
+      data: chartData,
+      options: chartOptions
+    }, chartType);
+  }
+
+  drawChartFromScratch(config, chartType = 'bar') {
     if (this.chart) {
       this.chart.destroy()
     }
     this.chartType = chartType
-    this.chart = new Chart(this.canvas.nativeElement, {
-      type: chartType,
-      data: chartData,
-      options: chartOptions
-    });
+    this.chart = new Chart(this.canvas.nativeElement, config);
   }
 
   ngOnInit() {
@@ -204,7 +208,7 @@ export class PlotComponent implements OnInit {
       text: this.titleInput
     }
     var scales = this.chart.config.options.scales
-    if (!scales){
+    if (!scales) {
       this.chart.update()
       return
     }
@@ -217,12 +221,12 @@ export class PlotComponent implements OnInit {
       labelString: this.yLabelInput
     }
     if (this.xUnitsInput) {
-      scales.xAxes[0].ticks.userCallback = (tick) => {
+      scales.xAxes[0].ticks.callback = (tick) => {
         return tick.toString() + this.xUnitsInput
       }
     }
     if (this.yUnitsInput) {
-      scales.yAxes[0].ticks.userCallback = (tick) => {
+      scales.yAxes[0].ticks.callback = (tick) => {
         return tick.toString() + this.yUnitsInput
       }
     }
@@ -247,23 +251,23 @@ export class PlotComponent implements OnInit {
   /**
    * Just solve some strange ANgular problem with binding by creating a new array
    */
-  labelsKeysArray(dataSeries: DataSeries){
+  labelsKeysArray(dataSeries: DataSeries) {
     return Array.from(dataSeries.labelsX.keys())
   }
 
-  /**
-   * @deprecated removing the line doesn't remove back
-   */
-  changeShowLine(event){
-     var id = event.target.value
-     var checked = event.target.checked
-     this.chart.config.data.datasets[id].showLine = checked
-     if (!checked){
-       delete this.chart.data.datasets[id].borderColor
-     } else{
-       this.chart.config.data.datasets[id].borderColor = this.colors[id].line
-     }
-     this.chart.update()
+
+  changeShowLine(event) {
+    var id = event.target.value
+    var checked = event.target.checked
+    //  doesn't work with just update
+    var d = this.chart.data.datasets[id]
+    d.showLine = checked
+    d.fill = checked
+    this.drawChartFromScratch({
+      type: this.chartType,
+      data: this.chart.data,
+      options: this.chart.config.options
+    }, this.chartType);
   }
 
   export(type) {
