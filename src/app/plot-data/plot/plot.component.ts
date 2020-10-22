@@ -177,7 +177,9 @@ export class PlotComponent implements OnInit {
     var datasets = this.chart.data.datasets
     for (let i = 0; i < this.colors.length; i++) {
       const color = this.colors[i];
+      // @ts-ignore
       datasets[i].backgroundColor = this.getColorFunction(color.back, this.xPointsColors, this.yPointsColors, this)
+      // @ts-ignore
       datasets[i].borderColor = this.getColorFunction(color.line, this.xPointsColors, this.yPointsColors, this)
     }
     this.chart.data.datasets = datasets
