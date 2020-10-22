@@ -18,6 +18,8 @@ export class PlotComponent implements OnInit {
 
   backgroundColors: string[]
   borderColor: string[]
+  // what colots will be different ranges of points if we color them specifically
+  pointsColors: string[]
   @ViewChild("canvas")
   canvas: ElementRef
 
@@ -34,6 +36,10 @@ export class PlotComponent implements OnInit {
   yUnitsInput: string
 
   colors: { back: string, line: string }[]
+  advancedColorSettings: boolean
+// user input for ranges of different colors for points on the graph
+  xPointsColors: any[]
+  yPointsColors: any[]
 
   chartTypes: { id: string, label: string }[]
   chartType: string //current chart type
@@ -43,6 +49,7 @@ export class PlotComponent implements OnInit {
   constructor(public el: ElementRef, public dataService: DataService) {
     this.backgroundColors = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
     this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
+    this.pointsColors = ['#000fff', '#ff0000','#edff00','#00ebff','#ffae00','#00a117','#ff00fc','#00ff24']
     this.chartTypes = [{ id: "bar", label: "Bar" },
     { id: "line", label: "Line" },
     { id: "radar", label: "Radar" },
@@ -52,6 +59,9 @@ export class PlotComponent implements OnInit {
       // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
     ]
     this.colors = []
+    this.xPointsColors = []
+    this.yPointsColors = []
+    this.advancedColorSettings = false
   }
 
   initChart(chartType = 'bar') {
@@ -101,15 +111,21 @@ export class PlotComponent implements OnInit {
         backColor = Util.hexToRgbA(this.backgroundColors[i % this.backgroundColors.length], alpha)
         borderColor = Util.hexToRgbA(this.borderColor[i % this.borderColor.length], 1)
       }
+      
       datasets.push({
         data: data,
         label: this.dataSeries[i].name,
-        backgroundColor: backColor,
-        borderColor: borderColor,
+        backgroundColor: this.getColorFunction(backColor, this.xPointsColors, this.yPointsColors, this),
+        borderColor: this.getColorFunction(borderColor, this.xPointsColors, this.yPointsColors, this),
         showLine: true,
         fill: true
       })
+      
       this.colors.push({ back: backColor, line: borderColor })
+    }
+    while(this.xPointsColors.length < datasets.length){
+      this.xPointsColors.push([]);
+      this.yPointsColors.push([]);
     }
 
     chartData = { datasets: datasets }
@@ -161,8 +177,8 @@ export class PlotComponent implements OnInit {
     var datasets = this.chart.data.datasets
     for (let i = 0; i < this.colors.length; i++) {
       const color = this.colors[i];
-      datasets[i].backgroundColor = color.back
-      datasets[i].borderColor = color.line
+      datasets[i].backgroundColor = this.getColorFunction(color.back, this.xPointsColors, this.yPointsColors, this)
+      datasets[i].borderColor = this.getColorFunction(color.line, this.xPointsColors, this.yPointsColors, this)
     }
     this.chart.data.datasets = datasets
     this.chart.update()
@@ -317,5 +333,61 @@ export class PlotComponent implements OnInit {
     var blob = new Blob([ab], { type: mimeString });
     return blob;
 
+  }
+
+  /**
+   * Returns the function to color points on the graph according to user specified ranges
+   * @param defaultColor default line/back color
+   * @param xPointsColor  ranges for x axis highlight
+   * @param yPointsColor  ranges for y axis highlight
+   * @param component the component, just because we use one function from it
+   */
+  getColorFunction(defaultColor, xPointsColor, yPointsColor, component) {
+    return function (context) {
+      var type = context.chart.config.type;
+      var setIndex = context.datasetIndex;
+      var index = context.dataIndex;
+      var value = context.dataset.data[index];
+      console.log(value);
+      if (!value) {
+        return defaultColor;
+      }
+      if (type == 'scatter') {
+        var col = component.getColorForValue(value.x, xPointsColor[setIndex])
+        if (col != null){
+          return col
+        }
+        col = component.getColorForValue(value.y, yPointsColor[setIndex]);
+        if (col != null){
+          return col
+        }
+      }
+      if (type == 'bar' || type == 'line'){
+        var col = component.getColorForValue(value, xPointsColor[setIndex])
+        if (col != null){
+          return col
+        }
+      }
+      return defaultColor;
+    }
+  }
+
+  addXpointColor(i){
+    this.xPointsColors[i].push({start:0, stop:0, color:this.pointsColors[this.xPointsColors[i].length%this.pointsColors.length]});
+  }
+
+  addYpointColor(i){
+    this.yPointsColors[i].push({start:0, stop:0, color:this.pointsColors[this.yPointsColors[i].length%this.pointsColors.length]});
+  }
+
+  // for the value determines if it belongs to any range and return color for it
+  getColorForValue(value, ranges){
+    for(var i=0; i<ranges.length;i++){
+      var range = ranges[i];
+      if (value >= range.start && value <= range.stop){
+        return range.color;
+      }
+    }
+    return null;
   }
 }

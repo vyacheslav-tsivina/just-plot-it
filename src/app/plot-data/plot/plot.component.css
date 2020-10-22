@@ -33,3 +33,7 @@
 .series-configuration {
     padding-left: 20px
 }
+
+.point-range-input{
+    width: 3em!important;
+}

@@ -32,7 +32,7 @@ export class DataLoaderComponent {
 140,145,160,200,170,110,20,25,54,35
 -10,-5,0,8,15,20,25,30,40,47
 
-17,14.3,12,4,8,8,15
+17,14.3,12,-4,8,8,15
 Monday,Tuesday,Wednesday,Thursdau,Friday,Saturday,Sunday
 
 15,14.9,11,6,9,8.5,17

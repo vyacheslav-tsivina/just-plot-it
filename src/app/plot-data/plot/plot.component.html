@@ -50,6 +50,9 @@
                 </ngb-panel>
                 <ngb-panel title="Colors">
                     <ng-template ngbPanelContent>
+                        <button type="button" class="btn btn-primary btn-sm mt-1 float-right"
+                            (click)="advanceColorSettings = !advanceColorSettings" title="Advanced settings"><i
+                                class="fa fa-sliders-h"></i></button>
                         <div *ngIf="chartType == 'pie' || chartType == 'doughnut' ; else colorsElseBlock">
                             <div *ngFor="let d of colors; let i = index">
                                 <b>{{dataSeries[i].name}}</b> <br />
@@ -64,11 +67,49 @@
                         <ng-template #colorsElseBlock>
                             <div>
                                 <div *ngFor="let d of colors; let i = index">
-                                    {{dataSeries[i].name}} <br />
+                                    <b>{{dataSeries[i].name}}</b> <br />
                                     <div class="color-picker-container">
                                         background: <input [(colorPicker)]="d.back" [style.background]="d.back" /> line:
                                         <input [(colorPicker)]="d.line" [style.background]="d.line" />
                                     </div>
+                                    <div *ngIf="advanceColorSettings">
+                                        <div *ngIf="chartType=='scatter' || chartType=='line' ">X points color ranges:
+                                        </div>
+                                        <div *ngIf="chartType=='bar'">values color ranges:</div>
+                                        <div *ngFor="let cp of xPointsColors[i] ; let k = index">
+
+                                            <div class="color-picker-container">
+                                                from: <input [(ngModel)]="cp.start" class="point-range-input">
+                                                to: <input [(ngModel)]="cp.stop" class="point-range-input">
+                                                <input [(colorPicker)]="cp.color" [style.background]="cp.color" />
+                                                <button type="button" class="btn btn-danger btn-sm  m-1"
+                                                    (click)="xPointsColors[i].splice(k,1)"><i
+                                                        class="fa fa-minus"></i></button>
+                                            </div>
+
+                                        </div>
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                            (click)="addXpointColor(i)"><i class="fa fa-plus"></i></button>
+                                        <div *ngIf="chartType=='scatter' || chartType=='line' ">
+                                            <div>Y points color ranges:</div>
+                                            <div *ngFor="let cp of yPointsColors[i]">
+
+                                                <div class="color-picker-container">
+                                                    from: <input [(ngModel)]="cp.start" class="point-range-input">
+                                                    to: <input [(ngModel)]="cp.stop" class="point-range-input">
+                                                    <input [(colorPicker)]="cp.color" [style.background]="cp.color" />
+                                                    <button type="button" class="btn btn-danger btn-sm  m-1"
+                                                        (click)="yPointsColors[i].splice(k,1)"><i
+                                                            class="fa fa-minus"></i></button>
+                                                </div>
+
+                                            </div>
+                                            <button type="button" class="btn btn-primary btn-sm"
+                                                (click)="addYpointColor(i)"><i class="fa fa-plus"></i></button>
+                                        </div>
+
+                                    </div>
+
                                 </div>
                             </div>
                         </ng-template>
@@ -100,11 +141,11 @@
                         <div>
                             Show line<br>
                             <div *ngFor="let s of dataSeries; let indexOfelement=index;" class="series-configuration">
-                                    <input #checkbox type="checkbox" class="form-check-input" name="series_chosen"
+                                <input #checkbox type="checkbox" class="form-check-input" name="series_chosen"
                                     value="{{indexOfelement}}" (change)="changeShowLine($event)" checked="true">
                                 <div #series_div class="series-name">{{s.name}}</div>
                             </div>
-                            
+
                         </div>
                     </ng-template>
                 </ngb-panel>
