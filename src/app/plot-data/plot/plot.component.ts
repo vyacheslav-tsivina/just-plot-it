@@ -45,23 +45,37 @@ export class PlotComponent implements OnInit {
   chartType: string //current chart type
   selectedChartType: string
 
+  // for violin and boxplot
+  violinSettings: {
+    showPoints: boolean
+    itemRadius: number
+    outlierColor: string
+  }
+  
+
 
   constructor(public el: ElementRef, public dataService: DataService) {
-    this.backgroundColors = ["#52D1DC", "#BD9391", "#ADBABD", "#91B7C7", "#B5D8CC"]
-    this.borderColor = ["#3C99A1", "#8A6B6A", "#7E888A", "#6A8691", "#849E95"]
-    this.pointsColors = ['#000fff', '#ff0000','#edff00','#00ebff','#ffae00','#00a117','#ff00fc','#00ff24']
+    this.backgroundColors = ["#52D1DC", "#BD9391", "#F9A03F", "#F8DDA4", "#DDF9C1"]
+    this.borderColor = ["#2ABECB", "#AB7673", "#F88812", "#F5CE7A", "#C2F490"]
+    this.pointsColors = ['#000fff', '#ff0000','#00ff24','#edff00','#00ebff','#ffae00','#00a117','#ff00fc']
     this.chartTypes = [{ id: "bar", label: "Bar" },
     { id: "line", label: "Line" },
     { id: "radar", label: "Radar" },
     { id: 'pie', label: 'Pie' },
     { id: 'doughnut', label: 'Doughnut' },
-    { id: 'violin', label: 'Violin' }
+    { id: 'violin', label: 'Violin' },
+    { id: 'boxplot', label: 'Boxplot'}
       // { id: 'horizontalBar', label: "Horizontal Bar" } // need to fix axes update
     ]
     this.colors = []
     this.xPointsColors = []
     this.yPointsColors = []
     this.advancedColorSettings = false
+    this.violinSettings= {
+      showPoints: false,
+      itemRadius: 3,
+      outlierColor: '#aaaaaa'
+    }
   }
 
   initChart(chartType = 'bar') {
@@ -133,8 +147,8 @@ export class PlotComponent implements OnInit {
       chartData.labels = labels
     }
     // violin works differently, maybe later make it more convenient
-    if (chartType == 'violin') {
-      chartData.labels = ['violin']
+    if (chartType == 'violin' || chartType == 'boxplot') {
+      chartData.labels = ['']
       for (var i = 0; i < chartData.datasets.length; i++) {
         chartData.datasets[i].data = [chartData.datasets[i].data]
       }
@@ -171,6 +185,18 @@ export class PlotComponent implements OnInit {
 
     this.chart.config.options.scales = scales
     this.chart.update()
+  }
+
+  updateViolinBoxplot(){
+    console.log("update boxplot")
+    var datasets = this.chart.data.datasets
+    for (var i=0; i<datasets.length;i++){
+      // @ts-ignore
+      datasets[i].itemRadius = this.violinSettings.showPoints? this.violinSettings.itemRadius: 0;
+      // @ts-ignore
+      datasets[i].outlierColor = this.violinSettings.outlierColor;
+    }
+    this.chart.update();
   }
 
   updateColors() {

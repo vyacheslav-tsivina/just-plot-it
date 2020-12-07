@@ -138,7 +138,7 @@
                 </ngb-panel>
                 <ngb-panel title="Configuration">
                     <ng-template ngbPanelContent>
-                        <div>
+                        <div *ngIf='chartType=="line" || chartType=="scatter"'>
                             Show line<br>
                             <div *ngFor="let s of dataSeries; let indexOfelement=index;" class="series-configuration">
                                 <input #checkbox type="checkbox" class="form-check-input" name="series_chosen"
@@ -146,6 +146,17 @@
                                 <div #series_div class="series-name">{{s.name}}</div>
                             </div>
 
+                        </div>
+                        <div *ngIf='chartType=="violin" || chartType=="boxplot"'>
+                            Show points: <input type='checkbox' [(ngModel)]="violinSettings.showPoints"> <br>
+                            Point radius: <input type='number' [(ngModel)]="violinSettings.itemRadius"> <br>
+                            <div class="color-picker-container">
+                                Outlier color: <input [(colorPicker)]="violinSettings.outlierColor" [style.background]="violinSettings.outlierColor" />
+                            </div> <br>
+                            
+
+                            <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateViolinBoxplot()"><i
+                                class="fa fa-save"></i></button>
                         </div>
                     </ng-template>
                 </ngb-panel>
