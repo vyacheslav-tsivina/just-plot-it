@@ -35,6 +35,15 @@ export class PlotComponent implements OnInit {
   xUnitsInput: string
   yUnitsInput: string
 
+  chartFontSettings: {
+    titleFontSize: number,
+    xLabelFontSize: number,
+    yLabelFontSize: number,
+    xTickFontSize: number,
+    yTickFontSize: number,
+    legendFontSize: number
+  }
+
   colors: { back: string, line: string }[]
   advancedColorSettings: boolean
 // user input for ranges of different colors for points on the graph
@@ -75,6 +84,14 @@ export class PlotComponent implements OnInit {
       showPoints: false,
       itemRadius: 3,
       outlierColor: '#aaaaaa'
+    }
+    this.chartFontSettings = {
+      titleFontSize: 12,
+      xLabelFontSize: 12,
+      yLabelFontSize: 12,
+      xTickFontSize: 12,
+      yTickFontSize: 12,
+      legendFontSize: 12
     }
   }
 
@@ -274,7 +291,26 @@ export class PlotComponent implements OnInit {
         return tick.toString() + this.yUnitsInput
       }
     }
-
+    if (this.chartFontSettings.titleFontSize){
+      this.chart.config.options.title.fontSize = this.chartFontSettings.titleFontSize;
+    }
+    if (this.chartFontSettings.xLabelFontSize){
+      scales.xAxes[0].scaleLabel.fontSize = this.chartFontSettings.xLabelFontSize
+    }
+    if (this.chartFontSettings.yLabelFontSize){
+      scales.yAxes[0].scaleLabel.fontSize = this.chartFontSettings.yLabelFontSize
+      
+    }
+    if (this.chartFontSettings.xTickFontSize){
+      scales.xAxes[0].ticks.fontSize = this.chartFontSettings.xTickFontSize
+    }
+    if (this.chartFontSettings.yTickFontSize){
+      scales.yAxes[0].ticks.fontSize = this.chartFontSettings.yTickFontSize
+    }
+    if (this.chartFontSettings.legendFontSize){
+      this.chart.config.options.legend.labels.fontSize = this.chartFontSettings.legendFontSize
+    }
+    
     this.chart.update()
   }
 

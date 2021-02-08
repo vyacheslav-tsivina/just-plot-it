@@ -119,16 +119,34 @@
                                 class="fa fa-save"></i></button>
                     </ng-template>
                 </ngb-panel>
-                <ngb-panel title="Labels">
+                <ngb-panel title="Labels/Fonts">
+                    <ng-template #fontTipContent>
+                        <div style="text-align: left; white-space:nowrap; max-width:none;">
+                            Font size
+                        </div>
+
+                    </ng-template>
                     <ng-template ngbPanelContent>
                         <div>
-                            Chart title <input type="text" [(ngModel)]="titleInput" class="mb-1"> <br>
+                            Legend font size <input type="number" [(ngModel)]="chartFontSettings.legendFontSize"
+                                class="font-input" placement="right" [ngbTooltip]="fontTipContent"> <br>
+                            Chart title <input type="text" [(ngModel)]="titleInput" class="mb-1"> <input type="number"
+                                [(ngModel)]="chartFontSettings.titleFontSize" class="font-input" placement="right"
+                                [ngbTooltip]="fontTipContent"> <br>
                             <div *ngIf="chartType == 'bar' || chartType == 'scatter' || chartType == 'line' ">
-                                X label <input type="text" [(ngModel)]="xLabelInput" class="mb-1"> <br>
-                                Y label <input type="text" [(ngModel)]="yLabelInput" class="mb-1"> <br>
+                                X label <input type="text" [(ngModel)]="xLabelInput" class="mb-1"><input type="number"
+                                    [(ngModel)]="chartFontSettings.xLabelFontSize" class="font-input" placement="right"
+                                    [ngbTooltip]="fontTipContent"> <br>
+                                Y label <input type="text" [(ngModel)]="yLabelInput" class="mb-1"><input type="number"
+                                    [(ngModel)]="chartFontSettings.yLabelFontSize" class="font-input" placement="right"
+                                    [ngbTooltip]="fontTipContent"> <br>
                                 <span *ngIf="dataSeries[0].type == 'x/y'">
-                                    X units <input type="text" [(ngModel)]="xUnitsInput" class="mb-1"><br /></span>
-                                Y units <input type="text" [(ngModel)]="yUnitsInput" class="mb-1"><br />
+                                    X units <input type="text" [(ngModel)]="xUnitsInput" class="mb-1"><input
+                                        type="number" [(ngModel)]="chartFontSettings.xTickFontSize" class="font-input"
+                                        placement="right" [ngbTooltip]="fontTipContent"></span> <br>
+                                Y units <input type="text" [(ngModel)]="yUnitsInput" class="mb-1"><input type="number"
+                                    [(ngModel)]="chartFontSettings.yTickFontSize" class="font-input" placement="right"
+                                    [ngbTooltip]="fontTipContent">
                             </div>
 
                             <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateLabels()"><i
@@ -151,12 +169,13 @@
                             Show points: <input type='checkbox' [(ngModel)]="violinSettings.showPoints"> <br>
                             Point radius: <input type='number' [(ngModel)]="violinSettings.itemRadius"> <br>
                             <div class="color-picker-container">
-                                Outlier color: <input [(colorPicker)]="violinSettings.outlierColor" [style.background]="violinSettings.outlierColor" />
+                                Outlier color: <input [(colorPicker)]="violinSettings.outlierColor"
+                                    [style.background]="violinSettings.outlierColor" />
                             </div> <br>
-                            
+
 
                             <button type="button" class="btn btn-primary btn-sm mt-1" (click)="updateViolinBoxplot()"><i
-                                class="fa fa-save"></i></button>
+                                    class="fa fa-save"></i></button>
                         </div>
                     </ng-template>
                 </ngb-panel>
