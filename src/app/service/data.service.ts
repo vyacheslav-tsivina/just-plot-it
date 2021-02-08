@@ -36,11 +36,14 @@ export class DataService {
                 line = lines[i+1]
                 sp = line.split(delimeter)
                 if (sp.length != series.y.length){
-                    return "You have different number of x,y values in series #"+n
+                    return "You have different number of x,y values in series #"+n+" #x="+sp.length+" #y="+series.y.length
                 }
                 if (sp.every(s => !isNaN(parseFloat(s)))){
                     series.x = sp.map(s => parseFloat(s))
                 } else{
+                    if (sp[0][0] == '_'){
+                        sp[0] = sp[0].slice(1)
+                    }
                     series.labelsX = sp
                 }
                 i++ // we have x
@@ -59,7 +62,6 @@ export class DataService {
             this.series.push(series)
             n++
         }
-        console.log(this.series)
    
         return ""
     }
